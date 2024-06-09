@@ -38,6 +38,8 @@ dependencies:
   flame: ^1.7.3
   google_fonts: ^4.0.4
   flame_audio: ^2.0.3
+  speedometer_chart: ^1.0.0
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +70,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/game/
-    - assets/background/
     - assets/audio/audi_sound.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see

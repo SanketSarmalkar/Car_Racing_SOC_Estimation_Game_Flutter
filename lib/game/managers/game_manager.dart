@@ -7,6 +7,7 @@ class GameManager extends Component with HasGameRef<CarRace> {
 
   Character character = Character.tesla;
   ValueNotifier<int> score = ValueNotifier(0);
+  // ValueNotifier<double> soc = ValueNotifier(100);
 
   GameState state = GameState.intro;
 
@@ -18,9 +19,15 @@ class GameManager extends Component with HasGameRef<CarRace> {
     state = GameState.intro;
   }
 
-  void increaseScore() {
+  int increaseScore() {
     score.value++;
+    return score.value;
   }
+
+  // double decreaseSOC() {
+  //   soc.value--;
+  //   return soc.value;
+  // }
 
   void selectCharacter(Character selectedCharcter) {
     character = selectedCharcter;

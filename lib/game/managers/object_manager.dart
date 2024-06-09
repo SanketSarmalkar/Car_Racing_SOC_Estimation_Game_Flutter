@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:get/get.dart';
 import 'package:mario_game/game/managers/game_manager.dart';
 import 'package:mario_game/game/car_race.dart';
+import 'package:mario_game/game/managers/soc_value_controller.dart';
 import 'package:mario_game/game/sprites/competitor.dart';
 
 final Random _rand = Random();
@@ -14,17 +16,44 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
   void onMount() {
     super.onMount();
 
-    addEnemy(1);
-    _maybeAddEnemy();
+    //addEnemy(1);
+    //_maybeAddEnemy();
   }
+
+  double _timeSinceLastScoreIncrease = 0;
+  double _timeSinceLastSOCDecrease = 0;
+  final double _scoreIncreaseInterval = 1; // Interval in seconds
+  final double _socDecreaseInterval = 2;
+  SOCValueController _socValueController = Get.put(SOCValueController());
 
   @override
   void update(double dt) {
+    // if (gameRef.gameManager.state == GameState.playing) {
+    //   gameRef.gameManager.increaseScore();
+    // }
     if (gameRef.gameManager.state == GameState.playing) {
-      gameRef.gameManager.increaseScore();
+      _timeSinceLastScoreIncrease += dt;
+      _timeSinceLastSOCDecrease += dt;
+
+      if (_timeSinceLastScoreIncrease >= _scoreIncreaseInterval) {
+        var score = gameRef.gameManager.increaseScore();
+        print("score: $score");
+        _logScoreIncreaseTime();
+        _timeSinceLastScoreIncrease = 0; // Reset the timer
+        /*
+          for each second a perticular amount of current is reliesed in the 
+          motor circuit.
+        */
+      }
+      if (_timeSinceLastSOCDecrease >= _socDecreaseInterval) {
+        //var soc = gameRef.gameManager.decreaseSOC();
+        var soc = _socValueController.decreaseSOC();
+        _timeSinceLastSOCDecrease = 0;
+        print("soc: $soc");
+      }
     }
 
-    addEnemy(1);
+    //addEnemy(1);
 
     super.update(dt);
   }
@@ -78,5 +107,10 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
         );
       },
     );
+  }
+
+  void _logScoreIncreaseTime() {
+    final DateTime now = DateTime.now();
+    print('Score increased at: $now');
   }
 }
