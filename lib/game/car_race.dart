@@ -36,23 +36,23 @@ class CarRace extends FlameGame
 
   late Player player;
 
-  late AudioPool pool;
+  //late AudioPool pool;
   @override
   FutureOr<void> onLoad() async {
     await add(_backGround);
     await add(gameManager);
     overlays.add('gameOverlay');
-    pool = await FlameAudio.createPool(
-      'audi_sound.mp3',
-      minPlayers: 3,
-      maxPlayers: 4,
-    );
+    // pool = await FlameAudio.createPool(
+    //   'audi_sound.mp3',
+    //   minPlayers: 3,
+    //   maxPlayers: 4,
+    // );
   }
 
-  void startBgmMusic() {
-    FlameAudio.bgm.initialize();
-    FlameAudio.bgm.play('audi_sound.mp3', volume: 1);
-  }
+  // void startBgmMusic() {
+  //   FlameAudio.bgm.initialize();
+  //   FlameAudio.bgm.play('audi_sound.mp3', volume: 1);
+  // }
 
   @override
   void update(double dt) {
@@ -111,7 +111,7 @@ class CarRace extends FlameGame
     objectManager = ObjectManager();
 
     add(objectManager);
-    startBgmMusic();
+    //startBgmMusic();
   }
 
   void onLose() {

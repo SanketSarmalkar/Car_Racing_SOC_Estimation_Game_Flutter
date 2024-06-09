@@ -73,7 +73,7 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
         Future.delayed(
           const Duration(seconds: 1),
           () {
-            _maybeAddEnemy();
+            // _maybeAddEnemy(); removing enemies
           },
         );
       },
