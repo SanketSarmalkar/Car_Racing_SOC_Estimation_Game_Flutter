@@ -40,6 +40,7 @@ dependencies:
   flame_audio: ^2.0.3
   speedometer_chart: ^1.0.0
   get: ^4.6.6
+  matrix2d: ^1.0.4
 
 dev_dependencies:
   flutter_test:

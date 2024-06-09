@@ -83,7 +83,6 @@ class CarRace extends FlameGame
   void setCharacter() {
     player = Player(
       character: gameManager.character,
-      moveLeftRightSpeed: 600,
     );
     add(player);
   }

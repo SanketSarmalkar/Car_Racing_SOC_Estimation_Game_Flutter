@@ -7,6 +7,8 @@ import 'package:mario_game/game/car_race.dart';
 enum PlayerState {
   left,
   right,
+  up,
+  down,
   center,
 }
 
@@ -14,18 +16,29 @@ class Player extends SpriteGroupComponent<PlayerState>
     with HasGameRef<CarRace>, KeyboardHandler, CollisionCallbacks {
   Player({
     required this.character,
-    this.moveLeftRightSpeed = 700,
+    this.baseSpeed = 200,
+    this.maxSpeed = 700,
+    this.acceleration = 100,
+    this.deceleration = 150,
   }) : super(
           size: Vector2(79, 109),
           anchor: Anchor.center,
           priority: 1,
         );
-  double moveLeftRightSpeed;
+
+  double baseSpeed;
+  double maxSpeed;
+  double acceleration;
+  double deceleration;
+  double currentSpeed = 0;
   Character character;
 
   int _hAxisInput = 0;
+  int _vAxisInput = 0;
   final int movingLeftInput = -1;
   final int movingRightInput = 1;
+  final int movingUpInput = -1;
+  final int movingDownInput = 1;
   Vector2 _velocity = Vector2.zero();
 
   @override
@@ -40,15 +53,36 @@ class Player extends SpriteGroupComponent<PlayerState>
   void update(double dt) {
     if (gameRef.gameManager.isIntro || gameRef.gameManager.isGameOver) return;
 
-    _velocity.x = _hAxisInput * moveLeftRightSpeed;
+    _velocity.x = _hAxisInput * baseSpeed;
+
+    if (_vAxisInput == movingUpInput) {
+      currentSpeed += acceleration * dt;
+      if (currentSpeed > maxSpeed) {
+        currentSpeed = maxSpeed;
+      }
+    } else if (_vAxisInput == movingDownInput) {
+      currentSpeed -= deceleration * dt;
+      if (currentSpeed < baseSpeed) {
+        currentSpeed = baseSpeed;
+      }
+    }
+
+    _velocity.y = _vAxisInput * currentSpeed;
 
     final double marioHorizontalCenter = size.x / 2;
+    final double marioVerticalCenter = size.y / 2;
 
     if (position.x < marioHorizontalCenter) {
-      position.x = gameRef.size.x - (marioHorizontalCenter);
+      position.x = gameRef.size.x - marioHorizontalCenter;
     }
-    if (position.x > gameRef.size.x - (marioHorizontalCenter)) {
+    if (position.x > gameRef.size.x - marioHorizontalCenter) {
       position.x = marioHorizontalCenter;
+    }
+    if (position.y < marioVerticalCenter) {
+      position.y = gameRef.size.y - marioVerticalCenter;
+    }
+    if (position.y > gameRef.size.y - marioVerticalCenter) {
+      position.y = marioVerticalCenter;
     }
 
     position += _velocity * dt;
@@ -67,13 +101,19 @@ class Player extends SpriteGroupComponent<PlayerState>
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _hAxisInput = 0;
+    _vAxisInput = 0;
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
       moveLeft();
     }
-
     if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
       moveRight();
+    }
+    if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
+      moveUp();
+    }
+    if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
+      moveDown();
     }
 
     return true;
@@ -81,26 +121,36 @@ class Player extends SpriteGroupComponent<PlayerState>
 
   void moveLeft() {
     _hAxisInput = 0;
-
     current = PlayerState.left;
-
     _hAxisInput += movingLeftInput;
   }
 
   void moveRight() {
-    _hAxisInput = 0; // by default not going left or right
-
+    _hAxisInput = 0;
     current = PlayerState.right;
-
     _hAxisInput += movingRightInput;
+  }
+
+  void moveUp() {
+    _vAxisInput = 0;
+    current = PlayerState.up;
+    _vAxisInput += movingUpInput;
+  }
+
+  void moveDown() {
+    _vAxisInput = 0;
+    current = PlayerState.down;
+    _vAxisInput += movingDownInput;
   }
 
   void resetDirection() {
     _hAxisInput = 0;
+    _vAxisInput = 0;
   }
 
   void reset() {
     _velocity = Vector2.zero();
+    currentSpeed = baseSpeed;
     current = PlayerState.center;
   }
 
@@ -114,11 +164,15 @@ class Player extends SpriteGroupComponent<PlayerState>
   Future<void> _loadCharacterSprites() async {
     final left = await gameRef.loadSprite('game/${character.name}.png');
     final right = await gameRef.loadSprite('game/${character.name}.png');
+    final up = await gameRef.loadSprite('game/${character.name}.png');
+    final down = await gameRef.loadSprite('game/${character.name}.png');
     final center = await gameRef.loadSprite('game/${character.name}.png');
 
     sprites = <PlayerState, Sprite>{
       PlayerState.left: left,
       PlayerState.right: right,
+      PlayerState.up: up,
+      PlayerState.down: down,
       PlayerState.center: center,
     };
   }
