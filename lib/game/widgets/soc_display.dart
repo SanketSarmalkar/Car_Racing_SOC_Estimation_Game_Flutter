@@ -20,7 +20,7 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
     return Obx(
       () => Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           color: Colors.grey.withOpacity(0.8),
         ),
         padding: const EdgeInsets.all(16.0),
@@ -31,8 +31,8 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
               minValue: 0,
               maxValue: 100,
               value: socValueController.soc.value.toDouble(),
-              minTextValue: 'Min. 0',
-              maxTextValue: 'Max. 100',
+              minTextValue: '0',
+              maxTextValue: '100',
               graphColor: const [Colors.red, Colors.yellow, Colors.green],
               pointerColor: Colors.black,
               valueVisible: true,
@@ -40,6 +40,9 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
               title: 'SOC Estimation',
             ),
             Text("OCV : ${socValueController.terminalVoltage}"),
+            Text("Speed: ${socValueController.speed.toStringAsPrecision(4)}"),
+            Text(
+                "Current: ${socValueController.current.toStringAsPrecision(4)}"),
           ],
         ),
       ),

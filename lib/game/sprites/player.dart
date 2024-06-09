@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:mario_game/game/car_race.dart';
+import 'package:mario_game/game/managers/soc_value_controller.dart';
 
 enum PlayerState {
   left,
@@ -16,10 +18,12 @@ class Player extends SpriteGroupComponent<PlayerState>
     with HasGameRef<CarRace>, KeyboardHandler, CollisionCallbacks {
   Player({
     required this.character,
-    this.baseSpeed = 200,
-    this.maxSpeed = 700,
-    this.acceleration = 100,
-    this.deceleration = 150,
+    this.baseSpeed = 0, // 60 km/hr in m/s
+    this.maxSpeed = 100, // 120 km/hr in m/s
+    this.horizontalBaseSpeed = 100.0,
+    this.verticalBaseSpeed = 0.4,
+    this.acceleration = 2.78, // 10 km/hr/s in m/s^2
+    this.deceleration = 2.78, // 10 km/hr/s in m/s^2
   }) : super(
           size: Vector2(79, 109),
           anchor: Anchor.center,
@@ -30,6 +34,8 @@ class Player extends SpriteGroupComponent<PlayerState>
   double maxSpeed;
   double acceleration;
   double deceleration;
+  double horizontalBaseSpeed;
+  double verticalBaseSpeed;
   double currentSpeed = 0;
   Character character;
 
@@ -40,6 +46,8 @@ class Player extends SpriteGroupComponent<PlayerState>
   final int movingUpInput = -1;
   final int movingDownInput = 1;
   Vector2 _velocity = Vector2.zero();
+
+  final SOCValueController _socValueController = Get.put(SOCValueController());
 
   @override
   FutureOr<void> onLoad() async {
@@ -53,7 +61,7 @@ class Player extends SpriteGroupComponent<PlayerState>
   void update(double dt) {
     if (gameRef.gameManager.isIntro || gameRef.gameManager.isGameOver) return;
 
-    _velocity.x = _hAxisInput * baseSpeed;
+    _velocity.x = _hAxisInput * horizontalBaseSpeed;
 
     if (_vAxisInput == movingUpInput) {
       currentSpeed += acceleration * dt;
@@ -67,7 +75,9 @@ class Player extends SpriteGroupComponent<PlayerState>
       }
     }
 
-    _velocity.y = _vAxisInput * currentSpeed;
+    _socValueController.speedUpdate(currentSpeed);
+
+    _velocity.y = _vAxisInput * verticalBaseSpeed * currentSpeed;
 
     final double marioHorizontalCenter = size.x / 2;
     final double marioVerticalCenter = size.y / 2;
