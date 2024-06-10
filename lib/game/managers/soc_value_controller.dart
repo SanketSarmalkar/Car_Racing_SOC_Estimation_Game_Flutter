@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flame/layers.dart';
 import 'package:get/get.dart';
+import 'package:mario_game/game/managers/matrix_multi.dart';
 import 'package:mario_game/game/managers/soc_estimation_kalman_filter.dart';
 import 'package:mario_game/game/utils/soc_ocv_data.dart';
 import 'dart:math' as math;
@@ -14,7 +15,8 @@ class SOCValueController extends GetxController {
   var speed = 60.0.obs;
   //final SOCDataList _socDataList = SOCDataList();
   final Interpolation _interpolation = Interpolation();
-  final Matrix2d m2d = const Matrix2d();
+  Matrix2d m2d = const Matrix2d();
+  final Matrix _matrix = Matrix();
 
   static const List<double> coefficients = [
     -1.67005725550949,
@@ -70,10 +72,10 @@ class SOCValueController extends GetxController {
 
   double decreaseSOC() {
     if (soc.value > 0) {
-      soc.value -= 1 * 0.1 * speed.value;
+      soc.value -= 1 * 0.01 * speed.value;
       updateTerminalVoltage();
       current.value = terminalVoltage * speed.value * 0.1;
-      // await estimatingSOCEKF(current.toDouble(), terminalVoltage.toDouble());
+      estimatingSOCEKF(current.toDouble(), terminalVoltage.toDouble());
       return soc.value;
     }
     return 0;
@@ -91,7 +93,7 @@ class SOCValueController extends GetxController {
   }
 
   //double SOC_Init = 1;
-  List<dynamic> X = [1, 0, 0];
+  List<double> X = [1, 0, 0];
   double deltaT = 1;
   double qnRated = 4.81 * 3600;
 
@@ -160,20 +162,26 @@ class SOCValueController extends GetxController {
     DataPoint(0.994787581000000, 199163.882300000),
   ];
 
+  // var pX = [
+  //   [0.025, 0, 0],
+  //   [0, 0.01, 0],
+  //   [0, 0, 0.01],
+  // ].obs;
+
   double interpolate(List<DataPoint> fR0, double x) {
     return _interpolation.linearInterpolation(fR0, x);
   }
 
-  List nX = [3];
+  int nX = 3;
 
   // Example matrices
-  List<dynamic> rX = [2.5e-5];
-  List<dynamic> pX = [
+  List<double> rX = [2.5e-5];
+  List<List<double>> pX = [
     [0.025, 0, 0],
     [0, 0.01, 0],
     [0, 0, 0.01],
   ];
-  List<dynamic> qX = [
+  List<List<double>> qX = [
     [1.0e-6, 0, 0],
     [0, 1.0e-5, 0],
     [0, 0, 1.0e-5],
@@ -181,10 +189,65 @@ class SOCValueController extends GetxController {
 
   var soc_estimated = 1.0;
   var vt_estimated = 4.15;
-  dynamic vt_error = 0.0;
+  var vt_error = 0.0;
 
-  Future<void> estimatingSOCEKF(double current, double voltage) async {
-    List<dynamic> u = [current];
+  // void estimatingSOCEKF(double current, double voltage) {
+  //   List<double> u = [current];
+  //   var soc = X[0];
+  //   var v1 = X[1];
+  //   var v2 = X[2];
+
+  //   var r0 = interpolate(FR0, soc);
+  //   var r1 = interpolate(FR1, soc);
+  //   var r2 = interpolate(FR2, soc);
+  //   var c1 = interpolate(FC1, soc);
+  //   var c2 = interpolate(FC2, soc);
+
+  //   var ocv = evaluatePolynomial(coefficients, soc);
+
+  //   var tau1 = c1 * r1;
+  //   var tau2 = c2 * r2;
+
+  //   var a1 = exp(-deltaT / tau1);
+  //   var a2 = exp(-deltaT / tau2);
+
+  //   var b1 = r1 * (1 - exp(-deltaT / tau1));
+  //   var b2 = r2 * (1 - exp(-deltaT / tau2));
+  //   var measVoltage = ocv - r0 * u[0] - v1 - v2;
+
+  //   var dOCV = differentiatePolynomial(derCoefficients, soc);
+
+  //   List<double> cX = [dOCV, -1, -1];
+
+  //   vt_error = voltage - measVoltage;
+  //   vt_estimated = measVoltage;
+  //   soc_estimated = X[0];
+
+  //   List<List<double>> a = [
+  //     [1, 0, 0],
+  //     [0, a1, 0],
+  //     [0, 0, a2],
+  //   ];
+
+  //   List<double> b = [-deltaT / qnRated, b1, b2];
+
+  //   X = m2d.addition(m2d.dot(a, X), m2d.dot(b, u));
+
+  //   pX = m2d.addition(m2d.dot(a, m2d.dot(pX, m2d.transpose(a))), qX);
+
+  //   List d1 = m2d.dot(pX, m2d.transpose(cX));
+
+  //   List d2 = [1];
+  //   List<dynamic> kalmanGain =
+  //       m2d.dot(d1, m2d.division(d2, m2d.addition(m2d.dot(cX, d1), rX)));
+
+  //   X = m2d.addition(X, m2d.dot(kalmanGain, vt_error));
+  //   pX = m2d.subtraction(
+  //       m2d.dot(m2d.ones(3, 3), nX), m2d.dot(m2d.dot(kalmanGain, cX), pX));
+  // }
+
+  void estimatingSOCEKF(double current, double voltage) {
+    double u = 3.1;
     var soc = X[0];
     var v1 = X[1];
     var v2 = X[2];
@@ -205,36 +268,38 @@ class SOCValueController extends GetxController {
 
     var b1 = r1 * (1 - exp(-deltaT / tau1));
     var b2 = r2 * (1 - exp(-deltaT / tau2));
-    var measVoltage = ocv - r0 * u[0] - v1 - v2;
+    var measVoltage = ocv - r0 * u - v1 - v2;
 
     var dOCV = differentiatePolynomial(derCoefficients, soc);
 
-    List<dynamic> cX = [dOCV, -1, -1];
+    List<double> cX = [dOCV, -1, -1];
 
     vt_error = voltage - measVoltage;
+    print(vt_error);
     vt_estimated = measVoltage;
     soc_estimated = X[0];
 
-    List<dynamic> a = [
+    List<List<double>> a = [
       [1, 0, 0],
       [0, a1, 0],
       [0, 0, a2],
     ];
 
-    List<dynamic> b = [-deltaT / qnRated, b1, b2];
+    List<double> b = [-deltaT / qnRated, b1, b2];
+    X = _matrix.add(_matrix.multiply(a, X), _matrix.dotMultiply(b, u));
+    print("Soc Estimated: ${X[0]}");
 
-    X = await m2d.addition(m2d.dot(a, X), m2d.dot(b, u));
+    pX = _matrix.add(
+        _matrix.multiply(a, _matrix.multiply(pX, _matrix.transpose(a))), qX);
 
-    pX = await m2d.addition(m2d.dot(a, m2d.dot(pX, m2d.transpose(a))), qX);
+    List<double> d1 = _matrix.add(
+        _matrix.multiply(cX, _matrix.multiply(pX, _matrix.transpose(cX))), rX);
+    List<double> kalmanGain =
+        _matrix.dotMultiply(_matrix.multiply(cX, pX), 1 / d1[0]);
 
-    List d1 = await m2d.dot(pX, m2d.transpose(cX));
+    X = _matrix.add(X, _matrix.dotMultiply(kalmanGain, vt_error));
 
-    List d2 = [1];
-    List<dynamic> kalmanGain =
-        await m2d.dot(d1, m2d.division(d2, m2d.addition(m2d.dot(cX, d1), rX)));
-
-    X = await m2d.addition(X, m2d.dot(kalmanGain, vt_error));
-    pX = await m2d.subtraction(
-        m2d.dot(m2d.ones(3, 3), nX), m2d.dot(m2d.dot(kalmanGain, cX), pX));
+    pX = _matrix.subtract(_matrix.eye(nX),
+        _matrix.multiply(_matrix.multiply(kalmanGain, cX), pX));
   }
 }
