@@ -43,6 +43,10 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
             Text("Speed: ${socValueController.speed.toStringAsPrecision(4)}"),
             Text(
                 "Current: ${socValueController.current.toStringAsPrecision(4)}"),
+            Text(
+                "SOC Estimated: ${socValueController.estimatedSOC.toStringAsPrecision(4)}"),
+            Text(
+                "Error: ${socValueController.soc.toDouble() - socValueController.estimatedSOC.toDouble()}")
           ],
         ),
       ),

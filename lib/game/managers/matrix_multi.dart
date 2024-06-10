@@ -1,6 +1,6 @@
 class Matrix {
-  List<List<double>> eye(int size) {
-    List<List<double>> identityMatrix =
+  List<List<num>> eye(int size) {
+    List<List<num>> identityMatrix =
         List.generate(size, (i) => List.filled(size, 0.0));
     for (int i = 0; i < size; i++) {
       identityMatrix[i][i] = 1.0;
@@ -8,14 +8,14 @@ class Matrix {
     return identityMatrix;
   }
 
-  List<double> dotMultiply(List<double> a, double b) {
+  List<num> dotMultiply(List<num> a, num b) {
     for (int i = 0; i < a.length; i++) {
       a[i] *= b;
     }
     return a;
   }
 
-  List<List<double>> dotMultiply2D(List<List<double>> a, double b) {
+  List<List<num>> dotMultiply2D(List<List<num>> a, num b) {
     for (int i = 0; i < a.length; i++) {
       for (int j = 0; j < a[i].length; j++) {
         a[i][j] *= b;
@@ -26,30 +26,29 @@ class Matrix {
 
   // Static method for matrix multiplication
   dynamic multiply(dynamic a, dynamic b) {
-    if (a is List<List<double>> && b is List<List<double>>) {
+    if (a is List<List<num>> && b is List<List<num>>) {
       // Matrix-matrix multiplication
       return _matrixMultiply(a, b);
-    } else if (a is List<List<double>> && b is List<double>) {
+    } else if (a is List<List<num>> && b is List<num>) {
       // Matrix-vector multiplication
       return _matrixVectorMultiply(a, b);
-    } else if (a is List<double> && b is List<List<double>>) {
+    } else if (a is List<num> && b is List<List<num>>) {
       // Vector-matrix multiplication
       return _vectorMatrixMultiply(a, b);
-    } else if (a is List<double> && b is List<double>) {
+    } else if (a is List<num> && b is List<num>) {
       return _vectorMultiply(a, b);
     } else {
       throw Exception('Invalid types for multiplication');
     }
   }
 
-  List<List<double>> _matrixMultiply(
-      List<List<double>> a, List<List<double>> b) {
+  List<List<num>> _matrixMultiply(List<List<num>> a, List<List<num>> b) {
     int rowsA = a.length;
     int colsA = a[0].length;
     int colsB = b[0].length;
 
     // Initialize the result matrix with zeros
-    List<List<double>> result =
+    List<List<num>> result =
         List.generate(rowsA, (_) => List.filled(colsB, 0.0));
 
     for (int i = 0; i < rowsA; i++) {
@@ -63,8 +62,7 @@ class Matrix {
     return result;
   }
 
-  List<double> _matrixVectorMultiply(
-      List<List<double>> matrix, List<double> vector) {
+  List<num> _matrixVectorMultiply(List<List<num>> matrix, List<num> vector) {
     int rows = matrix.length;
     int cols = matrix[0].length;
 
@@ -73,7 +71,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(rows, 0.0);
+    List<num> result = List.filled(rows, 0.0);
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
@@ -84,8 +82,7 @@ class Matrix {
     return result;
   }
 
-  List<double> _vectorMatrixMultiply(
-      List<double> vector, List<List<double>> matrix) {
+  List<num> _vectorMatrixMultiply(List<num> vector, List<List<num>> matrix) {
     int rows = matrix.length;
     int cols = matrix[0].length;
 
@@ -94,7 +91,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(cols, 0.0);
+    List<num> result = List.filled(cols, 0.0);
 
     for (int j = 0; j < cols; j++) {
       for (int i = 0; i < rows; i++) {
@@ -105,10 +102,10 @@ class Matrix {
     return result;
   }
 
-  List<List<double>> _vectorMultiply(List<double> a, List<double> b) {
-    List<List<double>> result = [];
+  List<List<num>> _vectorMultiply(List<num> a, List<num> b) {
+    List<List<num>> result = [];
     for (int i = 0; i < a.length; i++) {
-      List<double> row = [];
+      List<num> row = [];
       for (int j = 0; j < b.length; j++) {
         row.add(a[i] * b[j]);
       }
@@ -119,27 +116,25 @@ class Matrix {
 
   // Static method for matrix addition
   dynamic add(dynamic a, dynamic b) {
-    if (a is List<List<double>> && b is List<List<double>>) {
+    if (a is List<List<num>> && b is List<List<num>>) {
       return _matrixAdd(a, b);
-    } else if (a is List<List<double>> && b is List<double>) {
+    } else if (a is List<List<num>> && b is List<num>) {
       return _matrixVectorAdd(a, b);
-    } else if (a is List<double> && b is List<List<double>>) {
+    } else if (a is List<num> && b is List<List<num>>) {
       return _vectorMatrixAdd(a, b);
-    } else if (a is List<double> && b is List<double>) {
+    } else if (a is List<num> && b is List<num>) {
       return _vectorAdd(a, b);
     } else {
       throw Exception('Invalid types for addition');
     }
   }
 
-  static List<List<double>> _matrixAdd(
-      List<List<double>> a, List<List<double>> b) {
+  static List<List<num>> _matrixAdd(List<List<num>> a, List<List<num>> b) {
     int rows = a.length;
     int cols = a[0].length;
 
     // Initialize the result matrix with zeros
-    List<List<double>> result =
-        List.generate(rows, (_) => List.filled(cols, 0.0));
+    List<List<num>> result = List.generate(rows, (_) => List.filled(cols, 0.0));
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
@@ -150,8 +145,7 @@ class Matrix {
     return result;
   }
 
-  static List<double> _matrixVectorAdd(
-      List<List<double>> matrix, List<double> vector) {
+  static List<num> _matrixVectorAdd(List<List<num>> matrix, List<num> vector) {
     int rows = matrix.length;
     int cols = matrix[0].length;
 
@@ -160,7 +154,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(rows, 0.0);
+    List<num> result = List.filled(rows, 0.0);
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
@@ -171,8 +165,7 @@ class Matrix {
     return result;
   }
 
-  static List<double> _vectorMatrixAdd(
-      List<double> vector, List<List<double>> matrix) {
+  static List<num> _vectorMatrixAdd(List<num> vector, List<List<num>> matrix) {
     int rows = matrix.length;
     int cols = matrix[0].length;
 
@@ -181,7 +174,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(cols, 0.0);
+    List<num> result = List.filled(cols, 0.0);
 
     for (int j = 0; j < cols; j++) {
       for (int i = 0; i < rows; i++) {
@@ -192,7 +185,7 @@ class Matrix {
     return result;
   }
 
-  static List<double> _vectorAdd(List<double> a, List<double> b) {
+  static List<num> _vectorAdd(List<num> a, List<num> b) {
     int length = a.length;
 
     if (b.length != length) {
@@ -200,7 +193,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(length, 0.0);
+    List<num> result = List.filled(length, 0.0);
 
     for (int i = 0; i < length; i++) {
       result[i] = a[i] + b[i];
@@ -211,27 +204,25 @@ class Matrix {
 
   // Static method for matrix subtraction
   dynamic subtract(dynamic a, dynamic b) {
-    if (a is List<List<double>> && b is List<List<double>>) {
+    if (a is List<List<num>> && b is List<List<num>>) {
       return _matrixSubtract(a, b);
-    } else if (a is List<List<double>> && b is List<double>) {
+    } else if (a is List<List<num>> && b is List<num>) {
       return _matrixVectorSubtract(a, b);
-    } else if (a is List<double> && b is List<List<double>>) {
+    } else if (a is List<num> && b is List<List<num>>) {
       return _vectorMatrixSubtract(a, b);
-    } else if (a is List<double> && b is List<double>) {
+    } else if (a is List<num> && b is List<num>) {
       return _vectorSubtract(a, b);
     } else {
       throw Exception('Invalid types for subtraction');
     }
   }
 
-  static List<List<double>> _matrixSubtract(
-      List<List<double>> a, List<List<double>> b) {
+  static List<List<num>> _matrixSubtract(List<List<num>> a, List<List<num>> b) {
     int rows = a.length;
     int cols = a[0].length;
 
     // Initialize the result matrix with zeros
-    List<List<double>> result =
-        List.generate(rows, (_) => List.filled(cols, 0.0));
+    List<List<num>> result = List.generate(rows, (_) => List.filled(cols, 0.0));
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
@@ -242,8 +233,8 @@ class Matrix {
     return result;
   }
 
-  static List<double> _matrixVectorSubtract(
-      List<List<double>> matrix, List<double> vector) {
+  static List<num> _matrixVectorSubtract(
+      List<List<num>> matrix, List<num> vector) {
     int rows = matrix.length;
     int cols = matrix[0].length;
 
@@ -252,7 +243,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(rows, 0.0);
+    List<num> result = List.filled(rows, 0.0);
 
     for (int i = 0; i < rows; i++) {
       for (int j = 0; j < cols; j++) {
@@ -263,8 +254,8 @@ class Matrix {
     return result;
   }
 
-  static List<double> _vectorMatrixSubtract(
-      List<double> vector, List<List<double>> matrix) {
+  static List<num> _vectorMatrixSubtract(
+      List<num> vector, List<List<num>> matrix) {
     int rows = matrix.length;
     int cols = matrix[0].length;
 
@@ -273,7 +264,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(cols, 0.0);
+    List<num> result = List.filled(cols, 0.0);
 
     for (int j = 0; j < cols; j++) {
       for (int i = 0; i < rows; i++) {
@@ -284,7 +275,7 @@ class Matrix {
     return result;
   }
 
-  static List<double> _vectorSubtract(List<double> a, List<double> b) {
+  static List<num> _vectorSubtract(List<num> a, List<num> b) {
     int length = a.length;
 
     if (b.length != length) {
@@ -292,7 +283,7 @@ class Matrix {
     }
 
     // Initialize the result vector with zeros
-    List<double> result = List.filled(length, 0.0);
+    List<num> result = List.filled(length, 0.0);
 
     for (int i = 0; i < length; i++) {
       result[i] = a[i] - b[i];
@@ -303,13 +294,13 @@ class Matrix {
 
   // Static method for matrix transpose
   List<dynamic> transpose(dynamic matrix) {
-    if (matrix is List<List<double>>) {
+    if (matrix is List<List<num>>) {
       // If matrix is a 2D list
       int rows = matrix.length;
       int cols = matrix[0].length;
 
       // Initialize the transposed matrix with dimensions flipped
-      List<List<double>> transposed =
+      List<List<num>> transposed =
           List.generate(cols, (_) => List.filled(rows, 0.0));
 
       for (int i = 0; i < rows; i++) {
@@ -319,9 +310,9 @@ class Matrix {
       }
 
       return transposed;
-    } else if (matrix is List<double>) {
+    } else if (matrix is List<num>) {
       // If matrix is a 1D list (vector), convert it to a column vector
-      List<List<double>> transposed =
+      List<List<num>> transposed =
           List.generate(matrix.length, (index) => [matrix[index]]);
       return transposed;
     } else {
@@ -331,29 +322,29 @@ class Matrix {
 
   // Static method for matrix inverse
   List<dynamic> inverse(dynamic matrix) {
-    if (matrix is List<List<double>>) {
+    if (matrix is List<List<num>>) {
       // If matrix is a 2D list
       if (matrix.length != matrix[0].length) {
         throw ArgumentError('Matrix must be square for inversion');
       }
 
       int n = matrix.length;
-      List<List<double>> identity = List.generate(
+      List<List<num>> identity = List.generate(
           n, (i) => List.generate(n, (j) => (i == j ? 1.0 : 0.0)));
 
       // Create an augmented matrix [matrix | identity]
-      List<List<double>> augmented =
+      List<List<num>> augmented =
           List.generate(n, (i) => List.from(matrix[i])..addAll(identity[i]));
 
       // Perform Gaussian elimination to obtain the inverse
       for (int i = 0; i < n; i++) {
-        double pivot = augmented[i][i];
+        num pivot = augmented[i][i];
         for (int j = i; j < 2 * n; j++) {
           augmented[i][j] /= pivot;
         }
         for (int k = 0; k < n; k++) {
           if (k != i) {
-            double factor = augmented[k][i];
+            num factor = augmented[k][i];
             for (int j = 0; j < 2 * n; j++) {
               augmented[k][j] -= factor * augmented[i][j];
             }
@@ -362,7 +353,7 @@ class Matrix {
       }
 
       // Extract the right half of the augmented matrix (the inverse)
-      List<List<double>> inverseMatrix = [];
+      List<List<num>> inverseMatrix = [];
       for (int i = 0; i < n; i++) {
         inverseMatrix.add(augmented[i].sublist(n));
       }
