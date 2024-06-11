@@ -38,7 +38,7 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
               rangeVisible: true,
               title: 'SOC Estimation',
             ),
-            Text('soc: ${_socValueController.soc}'),
+            Text('soc: ${_socValueController.soc.toStringAsPrecision(4)}'),
             Text("OCV : ${_socValueController.terminalVoltage}"),
             Text("Speed: ${_socValueController.speed.toStringAsPrecision(4)}"),
             Text(
