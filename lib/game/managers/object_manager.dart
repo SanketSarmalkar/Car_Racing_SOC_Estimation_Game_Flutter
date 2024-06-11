@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, avoid_print
+
 import 'dart:math';
 
 import 'package:flame/components.dart';
@@ -12,19 +14,19 @@ final Random _rand = Random();
 class ObjectManager extends Component with HasGameRef<CarRace> {
   ObjectManager();
 
-  @override
-  void onMount() {
-    super.onMount();
+  // @override
+  // void onMount() {
+  //   super.onMount();
 
-    //addEnemy(1);
-    //_maybeAddEnemy();
-  }
+  //   //addEnemy(1);
+  //   //_maybeAddEnemy();
+  // }
 
   double _timeSinceLastScoreIncrease = 0;
   double _timeSinceLastSOCDecrease = 0;
   final double _scoreIncreaseInterval = 1; // Interval in seconds
   final double _socDecreaseInterval = 2;
-  SOCValueController _socValueController = Get.put(SOCValueController());
+  final SOCValueController _socValueController = Get.put(SOCValueController());
 
   @override
   void update(double dt) {
@@ -76,7 +78,7 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
   }
 
   final List<EnemyPlatform> _enemies = [];
-  void _maybeAddEnemy() {
+  void maybeAddEnemy() {
     if (specialPlatforms['enemy'] != true) {
       return;
     }

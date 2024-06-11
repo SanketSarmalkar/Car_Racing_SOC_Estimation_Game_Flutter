@@ -1,9 +1,5 @@
-import 'package:csv/csv.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:mario_game/game/car_race.dart';
 import 'package:mario_game/game/managers/soc_value_controller.dart';
 import 'package:speedometer_chart/speedometer_chart.dart';
 

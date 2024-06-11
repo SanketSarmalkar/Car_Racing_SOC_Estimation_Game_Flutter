@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 class BatteryData {
   final double soc;
   final double voltage;

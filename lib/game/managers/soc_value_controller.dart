@@ -1,16 +1,8 @@
-import 'dart:math';
-import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:flame/layers.dart';
 import 'package:get/get.dart';
 import 'package:mario_game/game/managers/current_interpolation.dart';
-import 'package:mario_game/game/managers/matrix_multi.dart';
 import 'package:mario_game/game/managers/soc_estimation_kalman_filter.dart';
 import 'package:mario_game/game/utils/battery_circuit_model_data.dart';
-import 'package:mario_game/game/utils/soc_ocv_data.dart';
-import 'package:mario_game/game/utils/time_based_sampling.dart';
-import 'dart:math' as math;
-import 'package:matrix2d/matrix2d.dart';
 import 'package:csv/csv.dart';
 
 class SOCValueController extends GetxController {
@@ -30,7 +22,7 @@ class SOCValueController extends GetxController {
   final SOCEstimationEKF _socEstimationEKF = Get.put(SOCEstimationEKF());
   final SOCOCVData _sococvData = SOCOCVData();
   final CurrentInterpolator _currentInterpolator = CurrentInterpolator();
-  final TimeBasedSampling _timeBasedSampling = TimeBasedSampling();
+  //final TimeBasedSampling _timeBasedSampling = TimeBasedSampling();
 
   num decreaseSOC() {
     if (soc.value > 0) {
@@ -64,7 +56,7 @@ class SOCValueController extends GetxController {
     //TimeBasedData dataSample = _timeBasedSampling.data[iteration.value];
 
     final myData = await rootBundle.loadString("assets/downsampledData.csv");
-    data.value = await const CsvToListConverter().convert(myData);
+    data.value = const CsvToListConverter().convert(myData);
     List<dynamic> dataSample = data[iteration.value];
 
     // // Calculate the rate of change of speed
@@ -74,10 +66,10 @@ class SOCValueController extends GetxController {
     // Increase the iteration value based on the rate of change of speed
     iteration.value += (speed.value * 1).toInt();
 
-    print(dataSample[1]);
+    //print(dataSample[1]);
     soc.value = dataSample[0];
-    print(dataSample[0]);
-    print(soc.value);
+    //print(dataSample[0]);
+    //print(soc.value);
     current.value = dataSample[2];
     terminalVoltage.value = dataSample[1];
     estimatedSOC.value = _socEstimationEKF.estimatingSOCEKF(

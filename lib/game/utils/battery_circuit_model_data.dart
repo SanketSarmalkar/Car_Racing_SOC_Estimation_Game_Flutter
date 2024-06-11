@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:mario_game/game/managers/soc_estimation_kalman_filter.dart';
 
 class BatteryCircuitModelData {

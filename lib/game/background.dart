@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:csv/csv.dart';
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mario_game/game/car_race.dart';
 import 'package:mario_game/game/managers/soc_value_controller.dart';

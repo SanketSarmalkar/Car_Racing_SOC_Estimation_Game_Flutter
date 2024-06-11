@@ -2,12 +2,8 @@ import 'dart:io' show Platform;
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 import 'package:mario_game/game/car_race.dart';
-import 'package:mario_game/game/managers/soc_value_controller.dart';
 import 'package:mario_game/game/widgets/soc_display.dart';
-import 'package:speedometer_chart/speedometer_chart.dart';
 import 'widgets.dart';
 
 class GameOverlay extends StatefulWidget {
@@ -20,7 +16,7 @@ class GameOverlay extends StatefulWidget {
 }
 
 class GameOverlayState extends State<GameOverlay> {
-  final SOCValueController _socValueController = Get.put(SOCValueController());
+  //final SOCValueController _socValueController = Get.put(SOCValueController());
   bool isPaused = false;
   final bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
