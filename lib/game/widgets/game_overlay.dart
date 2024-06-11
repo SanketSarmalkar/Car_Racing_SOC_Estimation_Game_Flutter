@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mario_game/game/car_race.dart';
+import 'package:mario_game/game/managers/soc_estimation_kalman_filter.dart';
+import 'package:mario_game/game/managers/soc_value_controller.dart';
+import 'package:mario_game/game/widgets/graph.dart';
 import 'package:mario_game/game/widgets/soc_display.dart';
 import 'widgets.dart';
 
@@ -18,6 +21,7 @@ class GameOverlay extends StatefulWidget {
 
 class GameOverlayState extends State<GameOverlay> {
   //final SOCValueController _socValueController = Get.put(SOCValueController());
+  final SOCEstimationEKF _socEstimationEKF = Get.put(SOCEstimationEKF());
   bool isPaused = false;
   final bool isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
@@ -99,6 +103,18 @@ class GameOverlayState extends State<GameOverlay> {
                           ),
                           child: Column(
                             children: [
+                              // Container(
+                              //   height: 200,
+                              //   width: 200,
+                              //   child: LineChartSample9(
+                              //     result: _socEstimationEKF.getSOCList(),
+                              //     xResult: _socEstimationEKF.getSOCListx(),
+                              //     // result: [],
+                              //     // xResult: [],
+                              //     upperBound: 102,
+                              //     lowerBound: 20,
+                              //   ),
+                              // ),
                               Text(
                                 'The goal of this project is to develop a system that estimates the battery current for specific values of State of Charge (SOC) and voltage using interpolation techniques. This system is useful for applications requiring precise battery management and monitoring, such as electric vehicles, renewable energy storage systems, and portable electronics.',
                                 style: TextStyle(

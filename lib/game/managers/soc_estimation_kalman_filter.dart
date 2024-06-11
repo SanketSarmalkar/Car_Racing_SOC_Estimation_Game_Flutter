@@ -41,7 +41,35 @@ class SOCEstimationEKF extends GetxController {
   final Matrix _matrix = Matrix();
   final SOCOCVData _sococvData = SOCOCVData();
 
+  List<num> X = [1, 0, 0];
+  num deltaT = 1;
+  num qnRated = 4.81 * 3600;
+
+  var pXStored = [
+    [0.025, 0, 0],
+    [0, 0.01, 0],
+    [0, 0, 0.01],
+  ].obs;
+
+  int nX = 3;
+
+  var rX = [2.5e-5].obs;
+  var qX = [
+    [1.0e-6, 0, 0],
+    [0, 1.0e-5, 0],
+    [0, 0, 1.0e-5],
+  ].obs;
+
+  var socEstimated = 1.0;
+  var iterate = 0.obs;
+  var socEstimatedListx = [].obs;
+  var socEstimatedList = [].obs;
+  var vtEstimated = 4.15;
+  var vtError = 0.0;
+
   num evaluatePolynomial(List<num> coeffs, num x) {
+    socEstimatedListx.add(iterate);
+    iterate.value++;
     num result = 0.0;
     for (int i = 0; i < coeffs.length; i++) {
       result += coeffs[i] * math.pow(x, i);
@@ -57,32 +85,9 @@ class SOCEstimationEKF extends GetxController {
     return result;
   }
 
-  List<num> X = [1, 0, 0];
-  num deltaT = 1;
-  num qnRated = 4.81 * 3600;
-
-  var pXStored = [
-    [0.025, 0, 0],
-    [0, 0.01, 0],
-    [0, 0, 0.01],
-  ].obs;
-
   num interpolate(List<DataPoint> fR0, num x) {
     return _interpolation.linearInterpolation(fR0, x);
   }
-
-  int nX = 3;
-
-  var rX = [2.5e-5].obs;
-  var qX = [
-    [1.0e-6, 0, 0],
-    [0, 1.0e-5, 0],
-    [0, 0, 1.0e-5],
-  ].obs;
-
-  var socEstimated = 1.0;
-  var vtEstimated = 4.15;
-  var vtError = 0.0;
 
   double estimatingSOCEKF(num current, num voltage) {
     num u = current;
@@ -138,6 +143,38 @@ class SOCEstimationEKF extends GetxController {
 
     pXStored.value = _matrix.subtract(_matrix.eye(nX),
         _matrix.multiply(_matrix.multiply(kalmanGain, cX), pXStored));
+
+    socEstimatedList.add(X[0]);
+    update();
     return X[0].toDouble() * 100;
+  }
+
+//graph
+
+  List<double> getSOCList() {
+    return convertRxListToDoubleList(socEstimatedList);
+  }
+
+  List<double> getSOCListx() {
+    return convertRxListToDoubleList(socEstimatedListx);
+  }
+
+  List<double> convertRxListToDoubleList(RxList<dynamic> rxList) {
+    List<double> doubleList = [];
+
+    for (var element in rxList) {
+      if (element is double) {
+        doubleList.add(element);
+      } else {
+        // Optionally handle non-double elements if needed
+        // For example, if the element is a string representation of a double, you could parse it
+        double? parsedElement = double.tryParse(element.toString());
+        if (parsedElement != null) {
+          doubleList.add(parsedElement);
+        }
+      }
+    }
+
+    return doubleList;
   }
 }

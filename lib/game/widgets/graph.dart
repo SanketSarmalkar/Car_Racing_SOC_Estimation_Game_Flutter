@@ -25,8 +25,8 @@ class LineChartSample9 extends StatefulWidget {
 class _LineChartSample9State extends State<LineChartSample9> {
   // final spots = List.generate(101, (i) => (i - 50) / 10)
   dynamic spots;
-
   Widget bottomTitleWidgets(double value, TitleMeta meta, double chartWidth) {
+    print(widget.result);
     spots = widget.xResult
         .map((x) => FlSpot(x, widget.result[widget.xResult.indexOf(x)]))
         .toList();
