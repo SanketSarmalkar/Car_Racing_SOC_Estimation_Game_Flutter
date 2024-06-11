@@ -36,8 +36,8 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
       _timeSinceLastSOCDecrease += dt;
 
       if (_timeSinceLastScoreIncrease >= _scoreIncreaseInterval) {
-        var score = gameRef.gameManager.increaseScore();
-        print("score: $score");
+        //var score = gameRef.gameManager.increaseScore();
+        //print("score: $score");
         _logScoreIncreaseTime();
         _timeSinceLastScoreIncrease = 0; // Reset the timer
         /*
@@ -45,9 +45,11 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
           motor circuit.
         */
       }
-      if (_timeSinceLastSOCDecrease >= _socDecreaseInterval) {
-        //var soc = gameRef.gameManager.decreaseSOC();
-        var soc = _socValueController.decreaseSOC();
+      if (_timeSinceLastSOCDecrease >= _socDecreaseInterval &&
+          _socValueController.speed > 0) {
+        //var soc = gameRef.gameManager.decreaseSOCCurrentInterpolation();
+        //var soc = _socValueController.decreaseSOC();
+        var soc = _socValueController.decreaseSOCTimeBased();
         _timeSinceLastSOCDecrease = 0;
         print("soc: $soc");
       }
@@ -111,6 +113,6 @@ class ObjectManager extends Component with HasGameRef<CarRace> {
 
   void _logScoreIncreaseTime() {
     final DateTime now = DateTime.now();
-    print('Score increased at: $now');
+    //print('Score increased at: $now');
   }
 }

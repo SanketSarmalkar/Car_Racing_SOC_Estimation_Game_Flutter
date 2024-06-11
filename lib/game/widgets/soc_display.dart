@@ -1,5 +1,7 @@
+import 'package:csv/csv.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:mario_game/game/car_race.dart';
 import 'package:mario_game/game/managers/soc_value_controller.dart';
@@ -13,10 +15,11 @@ class SOCValueDisplay extends StatefulWidget {
 }
 
 class _SOCValueDisplayState extends State<SOCValueDisplay> {
-  SOCValueController socValueController = Get.put(SOCValueController());
+  final SOCValueController _socValueController = Get.put(SOCValueController());
 
   @override
   Widget build(BuildContext context) {
+    //if (_socValueController.data.isEmpty) loadData();
     return Obx(
       () => Container(
         decoration: BoxDecoration(
@@ -30,7 +33,7 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
               dimension: 200,
               minValue: 0,
               maxValue: 100,
-              value: socValueController.soc.value.toDouble(),
+              value: _socValueController.soc.value.toDouble(),
               minTextValue: '0',
               maxTextValue: '100',
               graphColor: const [Colors.red, Colors.yellow, Colors.green],
@@ -39,14 +42,15 @@ class _SOCValueDisplayState extends State<SOCValueDisplay> {
               rangeVisible: true,
               title: 'SOC Estimation',
             ),
-            Text("OCV : ${socValueController.terminalVoltage}"),
-            Text("Speed: ${socValueController.speed.toStringAsPrecision(4)}"),
+            Text('soc: ${_socValueController.soc}'),
+            Text("OCV : ${_socValueController.terminalVoltage}"),
+            Text("Speed: ${_socValueController.speed.toStringAsPrecision(4)}"),
             Text(
-                "Current: ${socValueController.current.toStringAsPrecision(4)}"),
+                "Current: ${_socValueController.current.toStringAsPrecision(4)}"),
             Text(
-                "SOC Estimated: ${socValueController.estimatedSOC.toStringAsPrecision(4)}"),
+                "SOC Estimated: ${_socValueController.estimatedSOC.toStringAsPrecision(4)}"),
             Text(
-                "Error: ${socValueController.soc.toDouble() - socValueController.estimatedSOC.toDouble()}")
+                "Error: ${(_socValueController.soc.toDouble() - _socValueController.estimatedSOC.toDouble()).toPrecision(4)}")
           ],
         ),
       ),
