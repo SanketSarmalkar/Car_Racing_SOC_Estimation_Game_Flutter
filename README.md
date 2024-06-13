@@ -1,11 +1,26 @@
-***Building a Car Race Game with Flutter and Flame [Part 1]***
+***Building a Car Race Game with Flutter and Flame and soc estimation using Extended Kalman Filter***
 
-**Detail Medium article:**
-https://medium.com/@amitsingh506142/building-a-car-race-game-with-flutter-and-flame-part-1-f68e9e779b09
+This project provides functionality to interpolate the current of a battery based on the state of charge (SOC) and voltage values. The project is implemented in Dart and uses bilinear interpolation to estimate the current values from provided battery data.
+
+## Introduction
+
+The Battery Current Interpolation project is designed to help estimate the current of a battery given specific SOC and voltage values. This is particularly useful for applications in battery management systems where accurate current prediction is crucial.
+
+## Features
+
+- Provides a class for battery data (`BatteryData`) and current data (`CurrentData`).
+- Uses bilinear interpolation to estimate the battery current based on SOC and voltage.
+- Includes utility functions to handle and process data.
+
+## Installation
+
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/your-username/battery-current-interpolation.git
+   cd battery-current-interpolation
 
 **Want to play game?:**
 
-https://carerace-1d32c.web.app/#/
 
 **Introduction:**
 
@@ -22,7 +37,3 @@ Think of a game as a well-organized party. Just like a party has different eleme
 
 The game loop is like the heartbeat of a game. It's a continuous process that keeps everything in the game running smoothly. Imagine you're playing a game where you control a car. The game loop ensures that the car keeps moving, the obstacles keep coming, and everything happens in sync.
 
-
-**LinkeDin:** https://www.linkedin.com/in/amit-singh-023055193
-**StackOverflow:** https://stackoverflow.com/users/13051247/amit-singh
-**Github:** https://github.com/amitsingh6391
