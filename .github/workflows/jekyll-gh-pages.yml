@@ -27,6 +27,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Install Dart SDK version >= 3.0.1
+      - name: Install Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '>=3.0.1'
+
       # Install Flutter
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -38,11 +44,11 @@ jobs:
         run: flutter pub get
         env:
           PUB_CACHE: /home/runner/.pub-cache
-      
+
       # Build the Flutter Web app
       - name: Build Flutter Web
         run: flutter build web
-      
+
       # Setup Pages for Jekyll
       - name: Setup Pages
         uses: actions/configure-pages@v5
