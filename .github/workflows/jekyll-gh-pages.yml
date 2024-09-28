@@ -27,17 +27,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Install Dart SDK version 3.0.1 (or latest)
-      - name: Install Dart SDK
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: '3.0.1' # Specify an exact version like '3.0.1' or 'stable'
-
-      # Install Flutter
+      # Install Flutter (ensures Dart SDK 3.x comes bundled with Flutter)
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.0.0' # You can specify the required Flutter version
+          flutter-version: '3.0.0' # Specify a Flutter version >= 3.0.0 to include Dart SDK 3.x
+
+      # Run Flutter Doctor (Optional, helps diagnose setup issues)
+      - name: Run Flutter Doctor
+        run: flutter doctor
 
       # Run Flutter Pub Get to install dependencies
       - name: Install Flutter Dependencies
