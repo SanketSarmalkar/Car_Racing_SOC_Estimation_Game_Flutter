@@ -27,11 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Install Dart SDK version >= 3.0.1
+      # Install Dart SDK version 3.0.1 (or latest)
       - name: Install Dart SDK
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: '>=3.0.1'
+          sdk: '3.0.1' # Specify an exact version like '3.0.1' or 'stable'
 
       # Install Flutter
       - name: Install Flutter
