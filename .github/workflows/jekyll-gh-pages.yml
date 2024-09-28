@@ -1,5 +1,4 @@
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
-name: Deploy Jekyll with GitHub Pages dependencies preinstalled
+name: Deploy Jekyll with GitHub Pages and Flutter Web Support
 
 on:
   # Runs on pushes targeting the default branch
@@ -16,7 +15,6 @@ permissions:
   id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -28,13 +26,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Install Flutter
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.0.0' # You can specify the required Flutter version
+
+      # Run Flutter Pub Get to install dependencies
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+        env:
+          PUB_CACHE: /home/runner/.pub-cache
+      
+      # Build the Flutter Web app
+      - name: Build Flutter Web
+        run: flutter build web
+      
+      # Setup Pages for Jekyll
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Build with Jekyll
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
+          source: ./_site # Ensure this points to your build folder
           destination: ./_site
+
+      # Upload artifact
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
