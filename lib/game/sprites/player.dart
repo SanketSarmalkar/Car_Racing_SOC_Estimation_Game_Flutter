@@ -109,7 +109,7 @@ class Player extends SpriteGroupComponent<PlayerState>
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _hAxisInput = 0;
     _vAxisInput = 0;
 

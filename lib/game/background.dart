@@ -14,7 +14,7 @@ class BackGround extends ParallaxComponent<CarRace> {
   @override
   FutureOr<void> onLoad() async {
     //if (_socValueController.data.isEmpty) await loadData();
-    parallax = await gameRef.loadParallax(
+    parallax = await game.loadParallax(
       [
         ParallaxImageData('game/road1.png'),
         ParallaxImageData('game/road1.png'),

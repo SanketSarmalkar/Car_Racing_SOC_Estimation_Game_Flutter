@@ -1,15 +1,9 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:async';
-
-import 'package:flame/events.dart';
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:mario_game/game/background.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:mario_game/game/managers/game_manager.dart';
-import 'package:mario_game/game/managers/object_manager.dart';
-import 'package:mario_game/game/sprites/competitor.dart';
 import 'package:mario_game/game/sprites/player.dart';
 
 enum Character {
@@ -21,96 +15,50 @@ enum Character {
   tesla,
 }
 
-class CarRace extends FlameGame
-    with HasKeyboardHandlerComponents, HasCollisionDetection {
-  CarRace({
-    super.children,
-  });
-
-  final BackGround _backGround = BackGround();
+class CarRace extends FlameGame with HasCollisionDetection {
   final GameManager gameManager = GameManager();
-  ObjectManager objectManager = ObjectManager();
-  int screenBufferSpace = 300;
-
-  EnemyPlatform platFrom = EnemyPlatform();
-
   late Player player;
 
-  //late AudioPool pool;
   @override
-  FutureOr<void> onLoad() async {
-    await add(_backGround);
-    await add(gameManager);
-    overlays.add('gameOverlay');
-    // pool = await FlameAudio.createPool(
-    //   'audi_sound.mp3',
-    //   minPlayers: 3,
-    //   maxPlayers: 4,
-    // );
-  }
+  Future<void> onLoad() async {
+    super.onLoad();
 
-  // void startBgmMusic() {
-  //   FlameAudio.bgm.initialize();
-  //   FlameAudio.bgm.play('audi_sound.mp3', volume: 1);
-  // }
+    // Create the world and camera
+    final world = World();
+    final cameraComponent = CameraComponent(world: world)
+      ..viewfinder.visibleGameSize = Vector2(800, 600)
+      ..viewfinder.zoom = 1.0;
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-    if (gameManager.isGameOver) {
-      return;
-    }
-    if (gameManager.isIntro) {
-      overlays.add('mainMenuOverlay');
-      return;
-    }
-    if (gameManager.isPlaying) {
-      final Rect worldBounds = Rect.fromLTRB(
-        0,
-        camera.position.y - screenBufferSpace,
-        camera.gameSize.x,
-        camera.position.y + _backGround.size.y,
-      );
-      camera.worldBounds = worldBounds;
-    }
-  }
+    add(world);
+    add(cameraComponent);
 
-  @override
-  Color backgroundColor() {
-    return const Color.fromARGB(255, 241, 247, 249);
-  }
-
-  void setCharacter() {
+    // Add player to world
     player = Player(
       character: gameManager.character,
     );
     add(player);
+    cameraComponent.follow(player);
+
+    // Add game manager and background
+    world.add(gameManager);
+    overlays.add('gameOverlay');
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (gameManager.isGameOver) return;
+    if (gameManager.isIntro) {
+      overlays.add('mainMenuOverlay');
+      return;
+    }
   }
 
   void initializeGameStart() {
-    setCharacter();
-
-    gameManager.reset();
-
-    if (children.contains(objectManager)) objectManager.removeFromParent();
-
-    player.reset();
-    camera.worldBounds = Rect.fromLTRB(
-      0,
-      -_backGround
-          .size.y, // top of screen is 0, so negative is already off screen
-      camera.gameSize.x,
-      _backGround.size.y +
-          screenBufferSpace, // makes sure bottom bound of game is below bottom of screen
-    );
-    camera.followComponent(player);
-
     player.resetPosition();
-
-    objectManager = ObjectManager();
-
-    add(objectManager);
-    //startBgmMusic();
+    gameManager.reset();
+    camera.follow(player);
+    overlays.remove('mainMenuOverlay');
   }
 
   void onLose() {
@@ -139,3 +87,12 @@ class CarRace extends FlameGame
     overlays.remove('mainMenuOverlay');
   }
 }
+
+// class GameManager extends Component {
+//   bool isGameOver = false;
+//   bool isIntro = true;
+//   void reset() {
+//     isGameOver = false;
+//     isIntro = false;
+//   }
+// }
