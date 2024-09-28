@@ -1,75 +1,42 @@
-name: Deploy Jekyll with GitHub Pages and Flutter Web Support
+name: Build and Deploy Flutter Web
 
 on:
-  # Runs on pushes targeting the default branch
+  # Trigger the workflow on push to the main branch
   push:
     branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Manual trigger
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      # Install Flutter (ensures Dart SDK 3.x comes bundled with Flutter)
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.0.0' # Specify a Flutter version >= 3.0.0 to include Dart SDK 3.x
+    # Install Flutter SDK (this will also install the Dart SDK bundled with Flutter)
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.0.0' # Ensures Dart SDK >= 3.0.1 is used
 
-      # Run Flutter Doctor (Optional, helps diagnose setup issues)
-      - name: Run Flutter Doctor
-        run: flutter doctor
+    # Run Flutter Doctor to ensure proper setup
+    - name: Run Flutter Doctor
+      run: flutter doctor
 
-      # Run Flutter Pub Get to install dependencies
-      - name: Install Flutter Dependencies
-        run: flutter pub get
-        env:
-          PUB_CACHE: /home/runner/.pub-cache
+    # Run Flutter Pub Get to install dependencies
+    - name: Install dependencies
+      run: flutter pub get
 
-      # Build the Flutter Web app
-      - name: Build Flutter Web
-        run: flutter build web
+    # Build Flutter Web
+    - name: Build Flutter Web
+      run: flutter build web
 
-      # Setup Pages for Jekyll
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      # Build with Jekyll
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./_site # Ensure this points to your build folder
-          destination: ./_site
-
-      # Upload artifact
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    # Deploy to GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/web
